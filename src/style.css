@@ -1,0 +1,22 @@
+/* Import Font */
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+/* Import Tailwind CSS */
+@import "tailwindcss";
+
+/* Color */
+@theme {
+  --color-primary: #137fec;
+  --color-light: #f6f7f8;
+  --color-dark: #101922;
+}
+
+/* Define Font */
+.font-inter {
+  font-family: "Inter", sans-serif;
+}
+
+/* Class */
+.container {
+  @apply mx-auto px-4;
+}
