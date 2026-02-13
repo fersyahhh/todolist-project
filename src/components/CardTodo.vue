@@ -12,8 +12,9 @@ const props = defineProps({
   idTask: Number,
 });
 
+// Data Ref
 const isEdit = ref(false);
-const editInput = ref(null)
+const editInput = ref(null);
 const valueEdit = ref("");
 
 // Function handle checkbox
@@ -26,14 +27,18 @@ function handleRemove() {
   props.removeTask(props.idTask);
 }
 
+// Function toggle edit
 function toggleEdit() {
   isEdit.value = !isEdit.value;
 
   nextTick(() => {
     editInput.value?.focus();
-  })
+  });
+
+  valueEdit.value = "";
 }
 
+// Function handle edit
 function handleEdit() {
   props.saveEdit(props.idTask, valueEdit.value);
   isEdit.value = false;
@@ -43,7 +48,13 @@ function handleEdit() {
 <template>
   <div class="border-y border-black/5 bg-white px-4 py-6">
     <div :class="`flex justify-between ${isEdit ? 'flex-col' : ''}`">
-      <input v-model="valueEdit" ref="editInput" v-if="isEdit" class="border transition-all duration-300 ease-in-out border-black/20 px-3 outline-none focus:ring focus:ring-primary rounded-md py-2 w-full" type="text" />
+      <input
+        v-model="valueEdit"
+        ref="editInput"
+        v-if="isEdit"
+        class="focus:ring-primary w-full rounded-md border border-black/20 px-3 py-2 transition-all duration-300 ease-in-out outline-none focus:ring"
+        type="text"
+      />
       <div v-else class="flex items-center gap-4">
         <input
           :checked="props.isChecked"
@@ -55,7 +66,7 @@ function handleEdit() {
       </div>
       <div v-if="!isEdit" class="flex items-center space-x-6 text-slate-500">
         <button
-        @click="toggleEdit"
+          @click="toggleEdit"
           class="transition-all duration-300 ease-in-out hover:text-red-500"
         >
           <Pencil :size="20" />
@@ -67,9 +78,19 @@ function handleEdit() {
           <Trash :size="20" />
         </button>
       </div>
-      <div v-else-if="isEdit" class="flex items-center gap-3 mt-4">
-        <button @click="handleEdit" class="bg-primary text-white w-1/2 rounded-lg py-3 font-semibold">Save</button>
-        <button @click="toggleEdit" class="bg-slate-300 text-slate-700 w-1/2 rounded-lg py-3 font-medium">Cancel</button>
+      <div v-else-if="isEdit" class="mt-4 flex items-center gap-3">
+        <button
+          @click="handleEdit"
+          class="bg-primary w-1/2 rounded-lg py-3 font-semibold text-white"
+        >
+          Save
+        </button>
+        <button
+          @click="toggleEdit"
+          class="w-1/2 rounded-lg bg-slate-300 py-3 font-medium text-slate-700"
+        >
+          Cancel
+        </button>
       </div>
     </div>
   </div>
