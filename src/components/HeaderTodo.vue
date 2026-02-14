@@ -5,7 +5,7 @@ import { tasks } from '../stores/storeTodo';
 <template>
   <div class="flex items-center justify-between py-6">
     <div>
-      <h1 class="text-primary text-2xl font-bold">Task Master</h1>
+      <h1 class="text-primary text-2xl font-bold md:text-3xl">Task Master</h1>
       <p class="mt-1 text-sm text-slate-500">
         Organize your workflow efficiently.
       </p>

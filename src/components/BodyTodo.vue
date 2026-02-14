@@ -1,10 +1,14 @@
 <script setup>
 import { Plus } from "lucide-vue-next";
-import { computed, ref } from "vue";
+import { computed, ref, onMounted, onUnmounted } from "vue";
 import { tasks } from "../stores/storeTodo";
+import emptyImg from "../assets/empty.webp";
 
 // Lucide Icons
 import CardTodo from "./CardTodo.vue";
+
+// Window State
+const windowWidth = ref(window.innerWidth);
 
 // Reactivity State
 const valueInput = ref("");
@@ -23,6 +27,24 @@ const filteredTasks = computed(() => {
   }
 
   return tasks.value;
+});
+
+function handleResize() {
+  windowWidth.value = window.innerWidth;
+}
+
+onMounted(() => {
+  window.addEventListener("resize", handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("resize", handleResize);
+});
+
+const truncateLength = computed(() => {
+  if (windowWidth.value < 640) return 20; // mobile
+  if (windowWidth.value < 1024) return 35; // md
+  return 50; // lg+
 });
 
 // Function handle add task
@@ -59,12 +81,11 @@ function removeTask(id) {
 }
 
 // Function add substring on text task
-function truncateTask(data, length = 20) {
-  if (data.length > length) {
-    return data.substring(0, length) + "...";
-  } else {
-    return data;
+function truncateTask(text) {
+  if (text.length > truncateLength.value) {
+    return text.substring(0, truncateLength.value) + "...";
   }
+  return text;
 }
 
 // Function handle save edit
@@ -113,18 +134,21 @@ function handleCompletedTasks() {
 
 <template>
   <div
-    class="flex h-auto w-full flex-col justify-between overflow-hidden rounded-xl bg-white shadow-md shadow-black/10"
+    class="flex min-h-150 w-full flex-col justify-between overflow-hidden rounded-xl bg-white shadow-md shadow-black/10"
   >
     <div>
-      <form @submit.prevent="addTask" class="flex flex-col p-4">
+      <form
+        @submit.prevent="addTask"
+        class="flex flex-col gap-4 p-4 md:flex-row"
+      >
         <input
           v-model="valueInput"
-          class="rounded-lg border border-black/20 p-3"
+          class="rounded-lg border border-black/20 p-3 md:w-[70%]"
           type="text"
           placeholder="What needs to be done today?"
         />
         <button
-          class="bg-primary mt-4 flex items-center justify-center gap-3 rounded-lg py-3 font-bold text-white"
+          class="bg-primary transition-all duration-300 ease-in-out hover:opacity-80 flex items-center justify-center gap-3 rounded-lg py-3 font-bold text-white md:mt-0 md:w-[30%]"
         >
           <span><Plus color="white" :size="20" /></span> Add Task
         </button>
@@ -147,11 +171,27 @@ function handleCompletedTasks() {
           </p>
         </CardTodo>
       </div>
+      <div
+        v-if="tasks.length === 0"
+        class="flex h-full w-full items-center justify-center py-20"
+      >
+        <div class="h-40 w-40">
+          <img
+            class="h-full w-full object-cover object-center"
+            :src="emptyImg"
+            alt="Empty Image"
+          />
+        </div>
+      </div>
     </div>
 
-    <div class="bg-white/50 py-6 text-center">
+    <div
+      class="items-center justify-between bg-white/50 px-6 py-6 text-center md:flex"
+    >
       <p class="font-medium text-slate-700">{{ showTasksLeft() }} tasks left</p>
-      <div class="mt-4 mb-6 flex justify-center gap-6 text-slate-600">
+      <div
+        class="mt-4 mb-6 flex justify-center gap-6 text-slate-600 md:mt-0 md:mb-0"
+      >
         <button
           type="button"
           @click="handleAllTasks"

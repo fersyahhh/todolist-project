@@ -81,13 +81,13 @@ function handleEdit() {
       <div v-else-if="isEdit" class="mt-4 flex items-center gap-3">
         <button
           @click="handleEdit"
-          class="bg-primary w-1/2 rounded-lg py-3 font-semibold text-white"
+          class="bg-primary w-1/2 rounded-lg py-3 font-semibold text-white hover:opacity-80 transition-all duration-300 ease-in-out"
         >
           Save
         </button>
         <button
           @click="toggleEdit"
-          class="w-1/2 rounded-lg bg-slate-300 py-3 font-medium text-slate-700"
+          class="w-1/2 rounded-lg bg-slate-300 py-3 font-medium text-slate-700 hover:opacity-80 transition-all duration-300 ease-in-out"
         >
           Cancel
         </button>
