@@ -1,6 +1,6 @@
 <script setup>
 import { Plus } from "lucide-vue-next";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { tasks } from "../stores/storeTodo";
 
 // Lucide Icons
@@ -8,6 +8,22 @@ import CardTodo from "./CardTodo.vue";
 
 // Reactivity State
 const valueInput = ref("");
+
+// Filtered State
+const filter = ref("all");
+
+// Filtered Variable
+const filteredTasks = computed(() => {
+  if (filter.value === "active") {
+    return tasks.value.filter((task) => !task.done);
+  }
+
+  if (filter.value === "completed") {
+    return tasks.value.filter((task) => task.done);
+  }
+
+  return tasks.value;
+});
 
 // Function handle add task
 function addTask() {
@@ -71,17 +87,34 @@ function showTasksLeft() {
 
 // Function remove done tasks
 function removeDoneTasks() {
-  const doneTasks = tasks.value.filter((task) => task.done === false)
+  const doneTasks = tasks.value.filter((task) => task.done === false);
 
   if (doneTasks) {
-    tasks.value = doneTasks
-    localStorage.setItem('tasks', JSON.stringify(tasks.value))
+    tasks.value = doneTasks;
+    localStorage.setItem("tasks", JSON.stringify(tasks.value));
   }
+}
+
+// Function handle filter all tasks
+function handleAllTasks() {
+  filter.value = "all";
+}
+
+// Function handle filter active tasks
+function handleActiveTasks() {
+  filter.value = "active";
+}
+
+// Function handle filter completed tasks
+function handleCompletedTasks() {
+  filter.value = "completed";
 }
 </script>
 
 <template>
-  <div class="overflow-hidden rounded-xl bg-white shadow-md w-full h-130 flex flex-col justify-between shadow-black/10 overflow-y-auto">
+  <div
+    class="flex h-auto w-full flex-col justify-between overflow-hidden rounded-xl bg-white shadow-md shadow-black/10"
+  >
     <div>
       <form @submit.prevent="addTask" class="flex flex-col p-4">
         <input
@@ -96,7 +129,7 @@ function removeDoneTasks() {
           <span><Plus color="white" :size="20" /></span> Add Task
         </button>
       </form>
-  
+
       <div v-if="tasks.length !== 0" class="mt-6">
         <CardTodo
           :remove-task="removeTask"
@@ -104,7 +137,7 @@ function removeDoneTasks() {
           :id-task="data.id"
           :is-checked="data.done"
           :toggle-done="toggleDone"
-          v-for="data in tasks"
+          v-for="data in filteredTasks"
           :key="data.id"
         >
           <p
@@ -119,12 +152,31 @@ function removeDoneTasks() {
     <div class="bg-white/50 py-6 text-center">
       <p class="font-medium text-slate-700">{{ showTasksLeft() }} tasks left</p>
       <div class="mt-4 mb-6 flex justify-center gap-6 text-slate-600">
-        <p>All</p>
-        <p>Active</p>
-        <p>Completed</p>
+        <button
+          type="button"
+          @click="handleAllTasks"
+          :class="`transition-all ${filter === 'all' ? 'text-primary' : ''} hover:text-primary hover:bg-primary/10 rounded-md px-2 py-1 duration-300 ease-in-out`"
+        >
+          All
+        </button>
+        <button
+          type="button"
+          @click="handleActiveTasks"
+          :class="`hover:text-primary ${filter === 'active' ? 'text-primary' : ''} hover:bg-primary/10 rounded-md px-2 py-1 transition-all duration-300 ease-in-out`"
+        >
+          Active
+        </button>
+        <button
+          type="button"
+          @click="handleCompletedTasks"
+          :class="`hover:text-primary ${filter === 'completed' ? 'text-primary' : ''} hover:bg-primary/10 rounded-md px-2 py-1 transition-all duration-300 ease-in-out`"
+        >
+          Completed
+        </button>
       </div>
       <button
-      @click="removeDoneTasks"
+        type="button"
+        @click="removeDoneTasks"
         class="text-slate-500 transition-all duration-300 ease-in-out hover:text-red-500"
       >
         Clear Completed

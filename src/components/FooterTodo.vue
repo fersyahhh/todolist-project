@@ -1,6 +1,6 @@
 <script setup></script>
 
 <template>
-    <div>
+    <div class="bg-red-500">
     </div>
 </template>
